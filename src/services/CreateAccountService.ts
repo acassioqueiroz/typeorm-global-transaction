@@ -35,13 +35,19 @@ class CreateAccountService {
       `accountsRepository.instanceId ${this.accountsRepository.getInstanceId()}`
     );
 
+    console.log(`#### Account Number: ### ${number}`);
+
     const createdAccount = await this.accountsRepository.create({
       number,
       balance: 0,
     });
 
+    const cardNumber = Math.floor(Math.random() * 200);
+
+    console.log(`#### Crad Account Number: ### ${cardNumber}`);
+
     const createdCreditCard = await this.createCreditCardService.execute({
-      number: uuid(),
+      number: cardNumber.toString(),
       limit: 2000,
     });
 
