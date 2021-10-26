@@ -7,8 +7,6 @@ const globalTransactionMiddleware = async (
   response: Response,
   next: NextFunction
 ): Promise<void> => {
-  console.log(`globalTransactionMiddleware: start`);
-
   const globalTransactionProvider =
     container.resolve<IGlobalTransactionProvider>('GlobalTransactionProvider');
 

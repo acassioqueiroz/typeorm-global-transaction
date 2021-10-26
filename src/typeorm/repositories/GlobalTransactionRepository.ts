@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 import TypeormTransaction from '../../providers/GlobalTransactionProvider/implementations/TypeormTransaction';
 import { IGlobalTransactionRepository } from '../../repositories/IGlobalTransactionRepository';
 
-export default class GlobalTransactionRepository<T>
+export default class GlobalTransactionRepository<T = any>
   implements IGlobalTransactionRepository
 {
   constructor() {
@@ -16,6 +16,7 @@ export default class GlobalTransactionRepository<T>
   private transaction: TypeormTransaction;
 
   public useGlobalTransaction(transaction: TypeormTransaction): void {
+    console.log(`useGlobalTransaction has been called`);
     this.transaction = transaction;
   }
 

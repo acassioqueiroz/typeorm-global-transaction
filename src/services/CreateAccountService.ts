@@ -1,11 +1,13 @@
 import { inject, injectable } from 'tsyringe';
-import { v4 as uuid } from 'uuid';
 
 import ITransaction from '../providers/GlobalTransactionProvider/models/ITransaction';
+import globalTransaction from '../decorators/GlobalTransaction/globalTransaction';
+import useTransaction from '../decorators/GlobalTransaction/transaction';
 import IAccountsRepository from '../repositories/IAccountsRepository';
 import Account from '../typeorm/entities/Account';
 import CreditCard from '../typeorm/entities/CreditCard';
 import CreateCreditCardService from './CreateCreditCardService';
+import ITransactional from './ITransactional';
 
 interface IRequest {
   number: number;
@@ -17,34 +19,31 @@ interface IResponse {
 }
 
 @injectable()
-class CreateAccountService {
+class CreateAccountService implements ITransactional {
+  private transaction: ITransaction;
+
+  @globalTransaction()
+  public useGlobalTransaction(transaction: ITransaction): void {
+    this.transaction = transaction;
+  }
+
   constructor(
+    @useTransaction('accountsRepository')
     @inject('AccountsRepository')
     private accountsRepository: IAccountsRepository,
+    @useTransaction('createCreditCardService')
     @inject(CreateCreditCardService)
     private createCreditCardService: CreateCreditCardService
   ) {}
 
-  public useGlobalTransaction(transaction: ITransaction): void {
-    this.accountsRepository.useGlobalTransaction(transaction);
-    this.createCreditCardService.useGlobalTransaction(transaction);
-  }
-
   public async execute({ number }: IRequest): Promise<IResponse> {
-    console.log(
-      `accountsRepository.instanceId ${this.accountsRepository.getInstanceId()}`
-    );
-
-    console.log(`#### Account Number: ### ${number}`);
-
     const createdAccount = await this.accountsRepository.create({
       number,
       balance: 0,
     });
 
-    const cardNumber = Math.floor(Math.random() * 200);
-
-    console.log(`#### Crad Account Number: ### ${cardNumber}`);
+    const cardNumber = Math.floor(Math.random() * 100);
+    console.log(`#### Account: ${number} -> Card ${cardNumber}`);
 
     const createdCreditCard = await this.createCreditCardService.execute({
       number: cardNumber.toString(),
