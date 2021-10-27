@@ -1,9 +1,9 @@
 import { inject, injectable } from 'tsyringe';
 import globalTransaction from '../decorators/GlobalTransaction/globalTransaction';
 import useTransaction from '../decorators/GlobalTransaction/transaction';
-import ITransaction from '../providers/GlobalTransactionProvider/models/ITransaction';
 import ICreditCardsRepository from '../repositories/ICreditCardsRepository';
 import CreditCard from '../typeorm/entities/CreditCard';
+import TransactionalService from './TransactionalService';
 
 interface IRequest {
   number: string;
@@ -11,19 +11,15 @@ interface IRequest {
 }
 
 @injectable()
-class CreateCreditCardService {
-  private transaction: ITransaction;
-
-  // @globalTransaction()
-  public useGlobalTransaction(transaction: ITransaction): void {
-    this.transaction = transaction;
-  }
-
+@globalTransaction()
+class CreateCreditCardService extends TransactionalService {
   constructor(
     @useTransaction('creditCardsRepository')
     @inject('CreditCardsRepository')
     private creditCardsRepository: ICreditCardsRepository
-  ) {}
+  ) {
+    super();
+  }
 
   public async execute({ number, limit }: IRequest): Promise<CreditCard> {
     const createdCreditCard = await this.creditCardsRepository.create({

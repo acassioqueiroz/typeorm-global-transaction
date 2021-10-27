@@ -1,5 +1,4 @@
 import { EntityTarget, getRepository, Repository } from 'typeorm';
-import { v4 as uuid } from 'uuid';
 
 import TypeormTransaction from '../../providers/GlobalTransactionProvider/implementations/TypeormTransaction';
 import { IGlobalTransactionRepository } from '../../repositories/IGlobalTransactionRepository';
@@ -7,8 +6,13 @@ import { IGlobalTransactionRepository } from '../../repositories/IGlobalTransact
 export default class GlobalTransactionRepository<T = any>
   implements IGlobalTransactionRepository
 {
-  constructor() {
-    this.instanceId = uuid();
+  protected ormRepository: Repository<T>;
+
+  private entityClass: EntityTarget<T>;
+
+  constructor(entityClass: EntityTarget<T>) {
+    this.entityClass = entityClass;
+    this.ormRepository = getRepository(entityClass);
   }
 
   private instanceId: string;
@@ -16,16 +20,9 @@ export default class GlobalTransactionRepository<T = any>
   private transaction: TypeormTransaction;
 
   public useGlobalTransaction(transaction: TypeormTransaction): void {
-    console.log(`useGlobalTransaction has been called`);
     this.transaction = transaction;
-  }
-
-  protected getOrmRepository(entityClass: EntityTarget<T>): Repository<T> {
-    if (!this.transaction) {
-      return getRepository(entityClass);
-    }
     const queryRunner = this.transaction.getQueryRunner();
-    return queryRunner.manager.getRepository(entityClass);
+    this.ormRepository = queryRunner.manager.getRepository(this.entityClass);
   }
 
   public getInstanceId(): string {

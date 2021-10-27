@@ -25,10 +25,10 @@ class CreateAccountService extends TransactionalService {
   constructor(
     @useTransaction('accountsRepository')
     @inject('AccountsRepository')
-    private accountsRepository: IAccountsRepository,
+    public accountsRepository: IAccountsRepository,
     @useTransaction('createCreditCardService')
     @inject(CreateCreditCardService)
-    private createCreditCardService: CreateCreditCardService
+    public createCreditCardService: CreateCreditCardService
   ) {
     super();
   }
@@ -39,7 +39,7 @@ class CreateAccountService extends TransactionalService {
       balance: 0,
     });
 
-    const cardNumber = Math.floor(Math.random() * 100000);
+    const cardNumber = Math.floor(Math.random() * 1000000);
     console.log(`#### Account: ${number} -> Card ${cardNumber}`);
 
     const createdCreditCard = await this.createCreditCardService.execute({
