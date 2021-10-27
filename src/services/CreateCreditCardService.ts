@@ -22,6 +22,14 @@ class CreateCreditCardService extends TransactionalService {
   }
 
   public async execute({ number, limit }: IRequest): Promise<CreditCard> {
+    this.transaction.on('commit', () => {
+      console.log('Credit card has been created successfully.');
+    });
+
+    this.transaction.on('rollback', () => {
+      console.log('Credit card has been not created.');
+    });
+
     const createdCreditCard = await this.creditCardsRepository.create({
       number,
       limit,

@@ -4,7 +4,5 @@ import ITransaction from '../providers/GlobalTransactionProvider/models/ITransac
 export default abstract class TransactionalService {
   protected transaction: ITransaction;
 
-  public useGlobalTransaction(transaction: ITransaction): void {
-    this.transaction = transaction;
-  }
+  public useGlobalTransaction(transaction: ITransaction): void {}
 }

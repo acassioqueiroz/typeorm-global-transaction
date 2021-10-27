@@ -39,7 +39,7 @@ class CreateAccountService extends TransactionalService {
       balance: 0,
     });
 
-    const cardNumber = Math.floor(Math.random() * 1000000);
+    const cardNumber = Math.floor(Math.random() * 10000);
     console.log(`#### Account: ${number} -> Card ${cardNumber}`);
 
     const createdCreditCard = await this.createCreditCardService.execute({

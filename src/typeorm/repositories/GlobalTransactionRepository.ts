@@ -20,6 +20,9 @@ export default class GlobalTransactionRepository<T = any>
   private transaction: TypeormTransaction;
 
   public useGlobalTransaction(transaction: TypeormTransaction): void {
+    if (!transaction) {
+      return;
+    }
     this.transaction = transaction;
     const queryRunner = this.transaction.getQueryRunner();
     this.ormRepository = queryRunner.manager.getRepository(this.entityClass);

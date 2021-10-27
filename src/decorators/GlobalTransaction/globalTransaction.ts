@@ -3,16 +3,14 @@
 /* eslint-disable func-names */
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import ITransaction from '../../providers/GlobalTransactionProvider/models/ITransaction';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 const globalTranasction =
   () =>
   (constructor: Function): void => {
     const target: any = constructor;
-
-    const { useGlobalTransaction } = target.prototype;
 
     const transactionalItems: string[] =
       Reflect.getOwnMetadata('useTransaction', target.prototype.constructor) ||
@@ -23,7 +21,7 @@ const globalTranasction =
         transactionalItems.forEach((item) => {
           this[item].useGlobalTransaction(transaction);
         });
-        return useGlobalTransaction.apply(this, transaction);
+        this.transaction = transaction;
       },
     });
   };
