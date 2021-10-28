@@ -1,7 +1,5 @@
 import { inject, injectable } from 'tsyringe';
 
-import ITransactional from './ITransactional';
-import ITransaction from '../providers/GlobalTransactionProvider/models/ITransaction';
 import globalTransaction from '../decorators/GlobalTransaction/globalTransaction';
 import useTransaction from '../decorators/GlobalTransaction/transaction';
 import IAccountsRepository from '../repositories/IAccountsRepository';
